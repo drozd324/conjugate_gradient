@@ -30,7 +30,7 @@ double walltime(){
 }
 
 
-#define GRID_PTS 2
+#define GRID_PTS 6
 #define EPS 1e-8
 
 int main(){
@@ -38,8 +38,8 @@ int main(){
 	int N[GRID_PTS];
 	int num = 4;
 	
-	FILE *fp = fopen("q2_out.csv", "w");
-	fprintf(fp, "N,time,num_iter\n");
+	FILE *fp = fopen("writeup/q2_out.csv", "w");
+	fprintf(fp, "N,time,num iter\n");
 	
 	for (int k=0; k<GRID_PTS; k++){
 		num *= 2;

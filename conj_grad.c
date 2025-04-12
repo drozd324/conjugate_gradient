@@ -2,11 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <omp.h>
 
-#define MAX_ITER 10
+#define MAX_ITER 10000
 
 double dot(int n, double* v, double* w){
 	double sum = 0;
+	#pragma omp parallel for reduction(+:sum)
 	for (int i=0; i<n; i++){
 		sum += v[i]*w[i];	
 	}
@@ -14,6 +16,7 @@ double dot(int n, double* v, double* w){
 }
 
 void vect_sum(int n, double* v, double alpha, double* w, double* out){
+	#pragma omp parallel for
 	for (int i=0; i<n; i++){
 		out[i] = v[i] + alpha*w[i];	
 	}
@@ -27,6 +30,8 @@ void mat_mul(double* A, double* B, double* C, int n, int m, int p){
 	for (int i=0; i<n; i++){
 		for (int j=0; j<p; j++){
 			double sum = 0;
+			
+			#pragma omp parallel for reduction(+:sum)
 			for (int k=0; k<m; k++){
 				sum += A[i*m + k] * B[k*p + j];
 			}
