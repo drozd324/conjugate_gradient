@@ -3,7 +3,7 @@ execs := q2 q3
 CC := gcc 
 CFLAGS := -O3  
 LDFLAGS := -lm -fopenmp 
-DEBUG := -g -fsanitize=address -lefence -Wall -Wextra
+DEBUG := #$(" ")-g -fsanitize=address -lefence -Wall -Wextra #$(" ") #
 
 all: $(execs)
 

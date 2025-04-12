@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <omp.h>
 
-#define MAX_ITER 10000
+#define MAX_ITER 10000 
 
 double dot(int n, double* v, double* w){
 	double sum = 0;

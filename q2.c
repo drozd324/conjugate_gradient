@@ -30,22 +30,23 @@ double walltime(){
 }
 
 
-#define GRID_PTS 6
+#define GRID_PTS 5
 #define EPS 1e-8
 
 int main(){
 	
-	int N[GRID_PTS];
+	int N;
 	int num = 4;
 	
-	FILE *fp = fopen("writeup/q2_out.csv", "w");
+	FILE *fp = fopen("writeup/q2out.csv", "w");
+	FILE *fp_sol = fopen("writeup/q2sol.txt", "w");
 	fprintf(fp, "N,time,num iter\n");
 	
 	for (int k=0; k<GRID_PTS; k++){
 		num *= 2;
-		N[k] = num;
+		N = num;
 
-		int size = N[k]*N[k];
+		long long int size = N*N;
 		double* A = calloc(size * size, sizeof(double));
 		double* u = calloc(size, sizeof(double));
 		double* b = calloc(size, sizeof(double));
@@ -54,36 +55,41 @@ int main(){
 			A[i*size + i] =  4.0;
 		}
 		for (int i=0; i<size-1; ++i){
-			if ((i % N[k]) != N[k]-1){
+			if ((i % N) != N-1){
 				A[(i+1)*size + i+0] = 1.0;
 				A[(i+0)*size + i+1] = 1.0;	
-				//printf("%d\n", i);
 			}
 		}
-		for (int i=0; i<size-N[k]; ++i){
-			A[(i+N[k])*size + i+0] = 1.0;
-			A[(i+0)*size    + i+N[k]] = 1.0;
+		for (int i=0; i<size-N; ++i){
+			A[(i+N)*size + i+0] = 1.0;
+			A[(i+0)*size    + i+N] = 1.0;
 		}
 		
-		for (int i=0; i<N[k]; i++){
-			for (int j=0; j<N[k]; j++){
-				b[i*N[k] + j] = f((double)i/N[k], (double)j/N[k]);
+		for (int i=0; i<N; i++){
+			for (int j=0; j<N; j++){
+				b[i*N + j] = f((double)i/N, (double)j/N);
 			}
 		}
 		
-		//print_mat(size, A);	
-	
 		int num_iter;
 		double t1 = walltime();
 		conjugate_gradient(size, A, b, u, EPS, u, &num_iter);
 		double time = walltime() - t1;
 		
+	
+		if (k == GRID_PTS-1){	
+			for (int i=0; i<size; i++){
+				fprintf(fp_sol, "%lf ", u[i]);
+			}	
+			fprintf(fp_sol, "\n");
+		}
+
 		free(A);
 		free(u);
 		free(b);
-
-		fprintf(fp, "%d,%lf,%d\n", N[k], time, num_iter);
+		fprintf(fp, "%d,%lf,%d\n", N, time, num_iter);
 	}
 	fclose(fp);
+	fclose(fp_sol);
 }
 

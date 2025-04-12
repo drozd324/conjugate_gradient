@@ -9,23 +9,24 @@
 
 int main(){
 	
-	int N[GRID_PTS];
-	int num = 10;
+	int num = 1;
+	int N;	
 
 	for (int k=0; k<GRID_PTS; k++){
 		printf("iter k=%d\n", k);
 		num *= 10;
-		N[k] = num;
-
-		int size = N[k]*N[k];
+		N = num;
+	
+		int size = N;
+		printf("size thing = %d\n", size*size);
 		double* A = calloc(size * size, sizeof(double));
 		double* u = calloc(size, sizeof(double));
 		double* b = calloc(size, sizeof(double));
 		double* r = calloc(size, sizeof(double));
-		
-		for (int i=0; i<N[k]; i++){
-			for (int j=0; j<N[k]; j++){
-				A[i*size + j] = (N[k] - fabs((double)(i - j))) / N[k];
+	
+		for (int i=0; i<N; i++){
+			for (int j=0; j<N; j++){
+				A[i*size + j] = (N - fabs((double)(i - j))) / N;
 			}
 		}
 
@@ -48,8 +49,8 @@ int main(){
 
 		conjugate_gradient_saveres(size, A, b, u, stop_crit, u, &num_iter, residuals);
 		
-		char filename[20];
-		sprintf(filename, "q3_out_%d.txt", num);	
+		char filename[50];
+		sprintf(filename, "writeup/q3out%d.txt", num);	
 		FILE *fp = fopen(filename, "w");
 		// saves residual to file
         for (int j=0; j<num_iter; j++){
@@ -60,13 +61,14 @@ int main(){
         }
 		fclose(fp);
 		
+		for (int i=0; i<MAX_ITER; i++){
+			free(residuals[i]);
+		}
+
 		free(A);
 		free(u);
 		free(b);
 		free(r);
-		for (int i=0; i<MAX_ITER; i++){
-			free(residuals[i]);
-		}
 		free(residuals);
 	}
 }
