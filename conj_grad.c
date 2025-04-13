@@ -3,8 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <omp.h>
-
-#define MAX_ITER 10000 
+#include "conj_grad.h"
 
 double dot(int n, double* v, double* w){
 	double sum = 0;
@@ -59,7 +58,7 @@ void conjugate_gradient(int n, double* A, double* b, double* x_0, double eps, do
 
 	double* p  = malloc(n * sizeof(double)); 
 	double* Ap = malloc(n * sizeof(double)); 
-	double* r  =  malloc(n * sizeof(double)); 
+	double* r  = malloc(n * sizeof(double)); 
 	double* Ar = malloc(n * sizeof(double)); 
 
 	mat_mul(A, x_0, r, n, n, 1);
@@ -108,7 +107,7 @@ void conjugate_gradient(int n, double* A, double* b, double* x_0, double eps, do
  * @param x[out] pointer to double for soution vector
  * @param residuals[out] pointer to pointers of size num_iter x n which stores all computer residuals
 */
-void conjugate_gradient_saveres(int n, double* A, double* b, double* x_0, double eps, double* x, int* num_iter, double** residuals){
+void conjugate_gradient_saveres(int n, double* A, double* b, double* x_0, double eps, double* x, int* num_iter, double* residuals){
 	double alpha;
 	double beta;
 
@@ -123,6 +122,7 @@ void conjugate_gradient_saveres(int n, double* A, double* b, double* x_0, double
 	
 	int j;
 	for (j=0; j<MAX_ITER; j++){
+		printf("\rj = %d", j);
 		mat_mul(A, r, Ar, n, n, 1);
 		mat_mul(A, p, Ap, n, n, 1);
 		alpha = dot(n, r, Ar) / dot(n, Ap, Ap);
@@ -132,9 +132,9 @@ void conjugate_gradient_saveres(int n, double* A, double* b, double* x_0, double
 		vect_sum(n, r, -alpha, Ap, r);
 	
 		// saves residual
-        for (int i=0; i<n; i++){
-            residuals[j][i] = r[i];
-        }
+		for (int i=0; i<n; i++){
+			residuals[j*n + i] = r[i];
+		}
 
 		if (norm(n, r) < eps) {
 			break;
@@ -144,7 +144,7 @@ void conjugate_gradient_saveres(int n, double* A, double* b, double* x_0, double
 		vect_sum(n, r, beta, p, p);
 	}
 	
-	printf("Converged at iter = %d\n", j);
+	printf("\nConverged at iter = %d\n", j);
 	*num_iter = j;
 
 	free(p);

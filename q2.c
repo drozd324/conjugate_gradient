@@ -75,7 +75,6 @@ int main(){
 		double t1 = walltime();
 		conjugate_gradient(size, A, b, u, EPS, u, &num_iter);
 		double time = walltime() - t1;
-		
 	
 		if (k == GRID_PTS-1){	
 			for (int i=0; i<size; i++){

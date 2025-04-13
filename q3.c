@@ -5,21 +5,17 @@
 #include <float.h>
 #include "conj_grad.h"
 
-#define GRID_PTS 4
+#define MAT_ITER 4
 
 int main(){
-	
-	int num = 1;
-	int N;	
+	int N = 1;	
 
-	for (int k=0; k<GRID_PTS; k++){
-		printf("iter k=%d\n", k);
-		num *= 10;
-		N = num;
+	for (int k=0; k<MAT_ITER; k++){
+		N *= 10;
 	
-		int size = N;
-		printf("size thing = %d\n", size*size);
-		double* A = calloc(size * size, sizeof(double));
+		long long int size = N;
+		printf("size*size %lld\n", size*size);
+		double* A = calloc(size*size, sizeof(double));
 		double* u = calloc(size, sizeof(double));
 		double* b = calloc(size, sizeof(double));
 		double* r = calloc(size, sizeof(double));
@@ -42,28 +38,20 @@ int main(){
 		double abstol = 0;
 		double stop_crit = fmax(reltol * norm(size, r), abstol);
  		int num_iter;
-		double** residuals = malloc(MAX_ITER * sizeof(double*));
-		for (int i=0; i<MAX_ITER; i++){
-			residuals[i] = malloc(size * sizeof(double));
-		}
 
+		double* residuals = malloc(MAX_ITER*size * sizeof(double));
 		conjugate_gradient_saveres(size, A, b, u, stop_crit, u, &num_iter, residuals);
-		
-		char filename[50];
-		sprintf(filename, "writeup/q3out%d.txt", num);	
+	
+		char filename[100];
+		sprintf(filename, "writeup/q3out%d.txt", N);	
 		FILE *fp = fopen(filename, "w");
-		// saves residual to file
         for (int j=0; j<num_iter; j++){
         	for (int i=0; i<size; i++){
-            	fprintf(fp, "%lf ", residuals[j][i]);
+            	fprintf(fp, "%.17lf ", residuals[j*size + i]);
 			}
-            fprintf(fp, "\n");
-        }
-		fclose(fp);
-		
-		for (int i=0; i<MAX_ITER; i++){
-			free(residuals[i]);
+ 	    	fprintf(fp, "\n");
 		}
+		fclose(fp);
 
 		free(A);
 		free(u);
