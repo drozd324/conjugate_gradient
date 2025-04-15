@@ -30,21 +30,19 @@ double walltime(){
 }
 
 
-#define GRID_PTS 5
+#define GRID_PTS 6
 #define EPS 1e-8
 
 int main(){
 	
-	int N;
-	int num = 4;
+	int N = 2;
 	
 	FILE *fp = fopen("writeup/q2out.csv", "w");
 	FILE *fp_sol = fopen("writeup/q2sol.txt", "w");
 	fprintf(fp, "N,time,num iter\n");
 	
 	for (int k=0; k<GRID_PTS; k++){
-		num *= 2;
-		N = num;
+		N *= 2;
 
 		long long int size = N*N;
 		double* A = calloc(size * size, sizeof(double));
@@ -64,18 +62,21 @@ int main(){
 			A[(i+N)*size + i+0] = 1.0;
 			A[(i+0)*size    + i+N] = 1.0;
 		}
-		
+
 		for (int i=0; i<N; i++){
 			for (int j=0; j<N; j++){
 				b[i*N + j] = f((double)i/N, (double)j/N);
 			}
 		}
+
 		
 		int num_iter;
 		double t1 = walltime();
 		conjugate_gradient(size, A, b, u, EPS, u, &num_iter);
 		double time = walltime() - t1;
 	
+		printf("N = %d Converged at iter = %d\n", N, num_iter);
+
 		if (k == GRID_PTS-1){	
 			for (int i=0; i<size; i++){
 				fprintf(fp_sol, "%lf ", u[i]);

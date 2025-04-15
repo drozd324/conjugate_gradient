@@ -1,6 +1,6 @@
 #include <math.h>
 
-#define MAX_ITER 100
+#define MAX_ITER 100000
 
 double dot(int n, double* v, double* w);
 void vect_sum(int n, double* v, double alpha, double* w, double* out);

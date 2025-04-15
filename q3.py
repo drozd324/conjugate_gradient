@@ -14,7 +14,7 @@ colors = [
     "tab:olive",
     "tab:cyan"]
 
-for k, N in enumerate([10**j for j in range(1, 5)]):
+for k, N in enumerate([10**j for j in range(1, 3)]):
 
 	A = np.zeros((N, N))
 	for i in range(N):
@@ -35,14 +35,16 @@ for k, N in enumerate([10**j for j in range(1, 5)]):
 		iterator.append(i)
 		i *= 2
 		
-	norm_res = [np.linalg.norm(residuals[j]) for j in iterator]
+	error = [np.linalg.norm(residuals[j] - residuals[-1]) for j in iterator]
 	iterations = np.array([j for j in iterator])
 
 	#norm_res = [np.linalg.norm(residuals[j]) for j in range(residuals.shape[0])]
 	#iterations = np.array([j for j in range(residuals.shape[0])])
 
-	plt.semilogx(iterations, norm_res, "o-", label=f"N={N}", color=colors[k])
-	plt.semilogx(iterations, e_k(iterations), "o--", label=f"error bound N={N}", color=colors[k])
+	plt.loglog(iterations, error, "o-", label=f"N={N}", color=colors[k])
+	plt.loglog(iterations, e_k(iterations), "o--", label=f"error bound N={N}", color=colors[k])
+	#plt.semilogx(iterations, error, "o-", label=f"N={N}", color=colors[k])
+	#plt.semilogx(iterations, e_k(iterations), "o--", label=f"error bound N={N}", color=colors[k])
 
 plt.legend()
 plt.xlabel("iteration")

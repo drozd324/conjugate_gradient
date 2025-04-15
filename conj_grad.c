@@ -9,7 +9,7 @@ double dot(int n, double* v, double* w){
 	double sum = 0;
 	#pragma omp parallel for reduction(+:sum)
 	for (int i=0; i<n; i++){
-		sum += v[i]*w[i];	
+		sum += v[i]*w[i];
 	}
 	return sum;
 }
@@ -26,10 +26,10 @@ double norm(int n, double* v){
 } 
 
 void mat_mul(double* A, double* B, double* C, int n, int m, int p){
+	double sum;
 	for (int i=0; i<n; i++){
 		for (int j=0; j<p; j++){
-			double sum = 0;
-			
+			sum = 0;
 			#pragma omp parallel for reduction(+:sum)
 			for (int k=0; k<m; k++){
 				sum += A[i*m + k] * B[k*p + j];
@@ -64,15 +64,20 @@ void conjugate_gradient(int n, double* A, double* b, double* x_0, double eps, do
 	mat_mul(A, x_0, r, n, n, 1);
 	vect_sum(n, b, -1, r, r);
 	memcpy(p, r, n*sizeof(double));
-	
+	memcpy(x, x_0, n*sizeof(double));
+
+	double dot_Ar_prev;	
+
 	int j;
 	for (j=0; j<MAX_ITER; j++){
+		printf("iter j=%d\r", j);
+
 		mat_mul(A, r, Ar, n, n, 1);
 		mat_mul(A, p, Ap, n, n, 1);
 		alpha = dot(n, r, Ar) / dot(n, Ap, Ap);
 	
 		vect_sum(n, x,  alpha, p , x);
-		double dot_Ar_prev = dot(n, r, Ar);	
+		dot_Ar_prev = dot(n, r, Ar);	
 		vect_sum(n, r, -alpha, Ap, r);
 
 		if (norm(n, r) < eps) {
@@ -81,9 +86,12 @@ void conjugate_gradient(int n, double* A, double* b, double* x_0, double eps, do
 		
 		beta = dot(n, r, Ar) / dot_Ar_prev;
 		vect_sum(n, r, beta, p, p);
+
+		//compute
+		//vect_sum(n, Ar, beta, Ap, Ap);
 	}
-	
-	printf("Converged at iter = %d\n", j);
+
+	printf("\n");	
 	*num_iter = j;
 
 	free(p);
@@ -119,10 +127,12 @@ void conjugate_gradient_saveres(int n, double* A, double* b, double* x_0, double
 	mat_mul(A, x_0, r, n, n, 1);
 	vect_sum(n, b, -1, r, r);
 	memcpy(p, r, n*sizeof(double));
+	memcpy(x, x_0, n*sizeof(double));
 	
 	int j;
 	for (j=0; j<MAX_ITER; j++){
-		printf("\rj = %d", j);
+		printf("iter j=%d\r", j);
+
 		mat_mul(A, r, Ar, n, n, 1);
 		mat_mul(A, p, Ap, n, n, 1);
 		alpha = dot(n, r, Ar) / dot(n, Ap, Ap);
@@ -144,7 +154,7 @@ void conjugate_gradient_saveres(int n, double* A, double* b, double* x_0, double
 		vect_sum(n, r, beta, p, p);
 	}
 	
-	printf("\nConverged at iter = %d\n", j);
+	printf("\n");	
 	*num_iter = j;
 
 	free(p);

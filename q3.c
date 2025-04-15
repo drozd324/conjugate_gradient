@@ -5,7 +5,7 @@
 #include <float.h>
 #include "conj_grad.h"
 
-#define MAT_ITER 4
+#define MAT_ITER 3
 
 int main(){
 	int N = 1;	
@@ -14,7 +14,7 @@ int main(){
 		N *= 10;
 	
 		long long int size = N;
-		printf("size*size %lld\n", size*size);
+		printf("size*size = %lld\n", size*size);
 		double* A = calloc(size*size, sizeof(double));
 		double* u = calloc(size, sizeof(double));
 		double* b = calloc(size, sizeof(double));
@@ -36,7 +36,9 @@ int main(){
 	
 		double reltol = sqrt(DBL_EPSILON);
 		double abstol = 0;
-		double stop_crit = fmax(reltol * norm(size, r), abstol);
+		//double stop_crit = fmax(reltol * norm(size, r), abstol);
+		double stop_crit = 1e-2;
+		printf("Stopping criterion = %.17lf\n", stop_crit);
  		int num_iter;
 
 		double* residuals = malloc(MAX_ITER*size * sizeof(double));
