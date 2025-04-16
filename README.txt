@@ -9,3 +9,9 @@ for the plots run
 
 	python3 q2.py
 	python3 q3.py
+
+
+the writeup is found in the directory named writup in the files named
+	
+	hw3.pdf     and
+	report.pdf
