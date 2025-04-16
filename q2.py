@@ -10,13 +10,10 @@ N = data_csv["N"].tolist()
 print("printing csv data")
 print(data_csv)
 
-print("data sol --------------")
-print(data_sol)
-
 N_index = -1
 u = np.reshape(data_sol, (N[N_index], N[N_index])) 
 
-plt.imshow(u)
+plt.imshow(u, extent=[0, 1, 0, 1])
 cbar = plt.colorbar()  # adds a color scale bar
 cbar.set_label("u(x)")
 plt.title(f"plot of fuction u(x) for N = {N[N_index]}")

@@ -36,8 +36,7 @@ int main(){
 	
 		double reltol = sqrt(DBL_EPSILON);
 		double abstol = 0;
-		//double stop_crit = fmax(reltol * norm(size, r), abstol);
-		double stop_crit = 1e-2;
+		double stop_crit = fmax(reltol * norm(size, r), abstol);
 		printf("Stopping criterion = %.17lf\n", stop_crit);
  		int num_iter;
 
@@ -47,12 +46,14 @@ int main(){
 		char filename[100];
 		sprintf(filename, "writeup/q3out%d.txt", N);	
 		FILE *fp = fopen(filename, "w");
+		double* temp_sum = malloc(size * sizeof(double));		
         for (int j=0; j<num_iter; j++){
-        	for (int i=0; i<size; i++){
-            	fprintf(fp, "%.17lf ", residuals[j*size + i]);
-			}
- 	    	fprintf(fp, "\n");
+			vect_sum(size, &(residuals[size*size]), -1, &(residuals[j*size]), temp_sum);
+			double error = norm(size, temp_sum); 
+			fprintf(fp, "%.17lf ", error);
+
 		}
+		free(temp_sum);
 		fclose(fp);
 
 		free(A);

@@ -14,37 +14,33 @@ colors = [
     "tab:olive",
     "tab:cyan"]
 
-for k, N in enumerate([10**j for j in range(1, 3)]):
+for k, N in enumerate([10**j for j in range(1, 4)]):
 
 	A = np.zeros((N, N))
 	for i in range(N):
 		for j in range(N):
 			A[i,j] = (N - abs(i - j)) / N
 
-	residuals = np.loadtxt(f"writeup/q3out{N}.txt")
-
 	eigenvals = np.linalg.eig(A)[0]
 	sqrt_kappa = np.sqrt(eigenvals[0] / eigenvals[-1])
 
-	e_0 = np.linalg.norm(residuals[0] - residuals[-1])
-	e_k = lambda k : 2*((((sqrt_kappa - 1) / (sqrt_kappa + 1) ) )**k) * abs(e_0)
+	error = np.loadtxt(f"writeup/q3out{N}.txt")
+	print(f"len of file = {len(error)}")
+	e_k = lambda k : 2*((((sqrt_kappa - 1) / (sqrt_kappa + 1) ) )**k) * abs(error[0])
 	
 	iterator = []
 	i = 1
-	while i < residuals.shape[0]:
+	while i < len(error):
 		iterator.append(i)
 		i *= 2
 		
-	error = [np.linalg.norm(residuals[j] - residuals[-1]) for j in iterator]
 	iterations = np.array([j for j in iterator])
+	error = [error[j] for j in iterator]
 
-	#norm_res = [np.linalg.norm(residuals[j]) for j in range(residuals.shape[0])]
-	#iterations = np.array([j for j in range(residuals.shape[0])])
+	#iterations = np.arange(0, len(error), 1);
 
-	plt.loglog(iterations, error, "o-", label=f"N={N}", color=colors[k])
-	plt.loglog(iterations, e_k(iterations), "o--", label=f"error bound N={N}", color=colors[k])
-	#plt.semilogx(iterations, error, "o-", label=f"N={N}", color=colors[k])
-	#plt.semilogx(iterations, e_k(iterations), "o--", label=f"error bound N={N}", color=colors[k])
+	plt.semilogx(iterations, error, "-", label=f"N={N}", color=colors[k])
+	plt.semilogx(iterations, e_k(iterations), "--", label=f"error bound N={N}", color=colors[k])
 
 plt.legend()
 plt.xlabel("iteration")

@@ -86,9 +86,6 @@ void conjugate_gradient(int n, double* A, double* b, double* x_0, double eps, do
 		
 		beta = dot(n, r, Ar) / dot_Ar_prev;
 		vect_sum(n, r, beta, p, p);
-
-		//compute
-		//vect_sum(n, Ar, beta, Ap, Ap);
 	}
 
 	printf("\n");	
